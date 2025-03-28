@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    
+    .container {
+      padding: 16px;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    
+    h1 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .stats-card {
+      background-color: #F5F5F5;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .stats-title {
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    .stats-grid {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .stat-box {
+      flex: 1;
+      background: white;
+      border-radius: 4px;
+      padding: 8px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 11px;
+      color: #666;
+    }
+    
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    button {
+      background-color: #18A0FB;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    button:hover {
+      background-color: #0D8DE3;
+    }
+    
+    button:disabled {
+      background-color: #CCCCCC;
+      cursor: not-allowed;
+    }
+    
+    button.secondary {
+      background-color: #E5E5E5;
+      color: #333;
+    }
+    
+    button.secondary:hover {
+      background-color: #D5D5D5;
+    }
+    
+    .status {
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+    
+    .status.success {
+      background-color: #E3F5E9;
+      color: #18A957;
+    }
+    
+    .status.error {
+      background-color: #FFEFEF;
+      color: #F24822;
+    }
+    
+    .status.info {
+      background-color: #EDF5FF;
+      color: #18A0FB;
+    }
+    
+    .help-text {
+      margin-top: 24px;
+      border-top: 1px solid #E5E5E5;
+      padding-top: 16px;
+    }
+    
+    .help-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .help-list {
+      font-size: 11px;
+      color: #666;
+      padding-left: 16px;
+      margin: 0;
+    }
+    
+    .help-list li {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Frame Renamer</h1>
+    </div>
+    
+    <div class="stats-card">
+      <div class="stats-title">Frames</div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-value" id="total-frames">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="selected-frames">0</div>
+          <div class="stat-label">Selected</div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="status-container" style="display: none;">
+      <div id="status-message" class="status"></div>
+    </div>
+    
+    <div class="button-container">
+      <button id="rename-selected">Rename Selected Frames</button>
+      <button id="rename-all">Rename All Frames</button>
+      <button id="undo" class="secondary" disabled>Undo Rename</button>
+    </div>
+    
+    <div class="help-text">
+      <div class="help-title">How It Works</div>
+      <ul class="help-list">
+        <li>Plugin finds the largest text or named title layer in each frame</li>
+        <li>Frames are renamed to match the text content</li>
+        <li>Non-title text (buttons, paragraphs) are ignored</li>
+        <li>Use Undo if you need to revert changes</li>
+      </ul>
+    </div>
+  </div>
+  
+  <script>
+    // Initialize UI
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get UI elements
+      const renameSelectedButton = document.getElementById('rename-selected');
+      const renameAllButton = document.getElementById('rename-all');
+      const undoButton = document.getElementById('undo');
+      const totalFramesEl = document.getElementById('total-frames');
+      const selectedFramesEl = document.getElementById('selected-frames');
+      const statusContainer = document.getElementById('status-container');
+      const statusMessage = document.getElementById('status-message');
+      
+      // Get initial frame stats
+      parent.postMessage({ pluginMessage: { type: 'get-stats' } }, '*');
+      
+      // Handle rename selected button click
+      renameSelectedButton.addEventListener('click', function() {
+        showStatus('info', 'Renaming selected frames...');
+        renameSelectedButton.disabled = true;
+        renameAllButton.disabled = true;
+        
+        parent.postMessage({ pluginMessage: { type: 'rename-selected' } }, '*');
+      });
+      
+      // Handle rename all button click
+      renameAllButton.addEventListener('click', function() {
+        showStatus('info', 'Renaming all frames...');
+        renameSelectedButton.disabled = true;
+        renameAllButton.disabled = true;
+        
+        parent.postMessage({ pluginMessage: { type: 'rename-all' } }, '*');
+      });
+      
+      // Handle undo button click
+      undoButton.addEventListener('click', function() {
+        showStatus('info', 'Undoing rename operations...');
+        undoButton.disabled = true;
+        
+        parent.postMessage({ pluginMessage: { type: 'undo' } }, '*');
+      });
+      
+      // Listen for messages from the plugin code
+      window.onmessage = function(event) {
+        const message = event.data.pluginMessage;
+        
+        if (!message) return;
+        
+        switch (message.type) {
+          case 'stats-result':
+            // Update stats display
+            totalFramesEl.textContent = message.stats.total;
+            selectedFramesEl.textContent = message.stats.selected;
+            break;
+            
+          case 'rename-result':
+            // Enable buttons
+            renameSelectedButton.disabled = false;
+            renameAllButton.disabled = false;
+            
+            // Enable undo if successful
+            if (message.result.success > 0) {
+              undoButton.disabled = false;
+            }
+            
+            // Show status message
+            if (message.result.success > 0) {
+              showStatus(
+                'success', 
+                `Successfully renamed ${message.result.success} frames` + 
+                (message.result.failed > 0 ? ` (${message.result.failed} skipped)` : '')
+              );
+            } else {
+              showStatus(
+                'error', 
+                'No frames were renamed. Selected frames may not contain title text.'
+              );
+            }
+            break;
+            
+          case 'undo-result':
+            // Enable buttons
+            renameSelectedButton.disabled = false;
+            renameAllButton.disabled = false;
+            
+            // Disable undo button after use
+            undoButton.disabled = true;
+            
+            // Show status message
+            if (message.count > 0) {
+              showStatus('success', `Reverted ${message.count} frames to their original names.`);
+            } else {
+              showStatus('info', 'Nothing to undo.');
+            }
+            break;
+        }
+      };
+      
+      // Helper function to show status messages
+      function showStatus(type, message) {
+        statusContainer.style.display = 'block';
+        statusMessage.className = `status ${type}`;
+        statusMessage.textContent = message;
+      }
+    });
+  </script>
+</body>
+</html>
