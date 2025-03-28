@@ -1,6 +1,6 @@
 {
-  "name": "Figma Translator Plugin",
-  "id": "figma-translator-plugin",
+  "name": "frame-renamer-pro",
+  "id": "frame-renamer-pro",
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",
