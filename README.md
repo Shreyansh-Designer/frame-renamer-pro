@@ -1,69 +1,44 @@
-# Welcome to your Lovable project
 
-## Project info
+# Frame Renamer Pro - Figma Plugin
 
-**URL**: https://lovable.dev/projects/0bf85541-1eb8-4eac-bec1-c4bc55fe860d
+A powerful Figma plugin that automatically renames frames based on their title text layers, helping you maintain consistent naming conventions throughout your design files.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- **Smart Title Detection**: Identifies the main title text in each frame based on size and name
+- **Batch Renaming**: Process multiple frames at once with a single click
+- **Selective Renaming**: Choose between renaming selected frames or all frames
+- **Undo Safety**: Easily revert changes if needed
+- **Performance Optimized**: Handles large design files efficiently
 
-**Use Lovable**
+## How It Works
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0bf85541-1eb8-4eac-bec1-c4bc55fe860d) and start prompting.
+1. The plugin analyzes each frame to find text layers that are likely to be titles
+2. It intelligently identifies titles by looking for:
+   - Text layers named "Title", "Heading", "H1", etc.
+   - The largest text in the frame (generally titles are bigger)
+   - Text positioned near the top of the frame
+3. Frames are renamed to match the content of the identified title text
+4. Smaller text elements like labels, paragraphs, and button text are ignored
 
-Changes made via Lovable will be committed automatically to this repo.
+## Usage
 
-**Use your preferred IDE**
+1. Select the frames you want to rename (or select none to enable the "Rename All" option)
+2. Run the Frame Renamer Pro plugin from the Figma plugins menu
+3. Click "Rename Selected Frames" or "Rename All Frames"
+4. Review the results, and use the "Undo Rename" button if needed
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Best Practices
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Name your title text layers consistently (e.g., "Title", "H1", "Screen Name")
+- Make sure your titles are larger than regular text for better detection
+- Review the changes after running the plugin
 
-Follow these steps:
+## Development
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+This plugin is built with React, TypeScript and uses the Figma Plugin API.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## License
 
-# Step 3: Install the necessary dependencies.
-npm i
+MIT
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/0bf85541-1eb8-4eac-bec1-c4bc55fe860d) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
